@@ -1,23 +1,32 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import NavBar from "../components/NavBar.jsx";
-import { useExams } from "../lib/store.js";
-
+import { listExams } from "../lib/db.js";
 
 export const Route = createFileRoute("/exams/")({
   head: () => ({
     meta: [
       { title: "Exams — QuizPoll" },
-      {
-        name: "description",
-        content: "Choose from a collection of timed multiple-choice exams and get instant scoring.",
-      },
+      { name: "description", content: "Choose from a collection of timed exams and get instant scoring." },
     ],
   }),
   component: ExamsList,
 });
 
 function ExamsList() {
-  const [exams] = useExams();
+  const [exams, setExams]   = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError]   = useState("");
+
+  useEffect(() => {
+    let cancelled = false;
+    listExams()
+      .then((data) => { if (!cancelled) setExams(data); })
+      .catch((e)   => { if (!cancelled) setError(e.message); })
+      .finally(()  => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
+  }, []);
+
   return (
     <div className="min-h-screen bg-background">
       <NavBar />
@@ -28,16 +37,15 @@ function ExamsList() {
       </section>
 
       <main className="mx-auto max-w-5xl px-5 py-12">
+        {loading && <p className="text-center text-muted-foreground">Loading exams…</p>}
+        {error   && <p className="text-center text-destructive">{error}</p>}
         <div className="grid gap-5 sm:grid-cols-2">
           {exams.map((exam) => (
-            <div
-              key={exam.id}
-              className="flex flex-col rounded-2xl border border-border bg-card p-6 shadow-sm"
-            >
+            <div key={exam.id} className="flex flex-col rounded-2xl border border-border bg-card p-6 shadow-sm">
               <h2 className="text-xl font-semibold text-primary">{exam.title}</h2>
               <p className="mt-2 flex-1 text-muted-foreground">{exam.description}</p>
               <div className="mt-4 flex items-center gap-4 text-sm text-muted-foreground">
-                <span>{exam.questions.length} questions</span>
+                <span>{exam.questionCount} question{exam.questionCount !== 1 ? "s" : ""}</span>
                 <span>·</span>
                 <span>{exam.minutes} min</span>
               </div>
@@ -51,6 +59,9 @@ function ExamsList() {
             </div>
           ))}
         </div>
+        {!loading && !error && exams.length === 0 && (
+          <p className="text-center text-muted-foreground">No exams available yet.</p>
+        )}
       </main>
 
       <footer className="gradient-blue-amber py-6 text-center text-sm text-white">

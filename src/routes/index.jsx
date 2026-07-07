@@ -1,6 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import NavBar from "../components/NavBar.jsx";
-import { seedExams, seedPolls } from "../lib/data.js";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -56,13 +55,13 @@ function Home() {
         <div className="flex justify-center gap-5 flex-wrap">
           <InstitutionCard
             title="Timed Exams"
-            blurb={`${seedExams.length} ready quizzes with countdown timers and instant scoring.`}
+            blurb="Browse available quizzes with countdown timers and instant scoring."
             to="/exams"
             cta="Browse exams"
           />
           <InstitutionCard
             title="Live Polls"
-            blurb={`${seedPolls.length} live polls with one-tap voting and real-time percentages.`}
+            blurb="Cast your vote with one-tap voting and real-time percentages."
             to="/polls"
             cta="See polls"
           />

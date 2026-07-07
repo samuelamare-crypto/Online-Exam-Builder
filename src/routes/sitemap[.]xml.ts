@@ -1,7 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
 
-const BASE_URL = "";
+// Set VITE_SITE_URL in your .env to your production domain (no trailing slash).
+// Without it URLs will be relative, which some crawlers accept and others ignore.
+const BASE_URL = (import.meta.env.VITE_SITE_URL as string) ?? "";
 
 export const Route = createFileRoute("/sitemap.xml")({
   server: {
