@@ -87,4 +87,8 @@
     "typescript-eslint": "^8.56.1",
     "vite": "^8.0.16"
   }
+  "deploy": "npm run build && wrangler deploy",
+"preview": "npm run build && wrangler dev",
+"cf-typegen": "wrangler types"
 }
+
