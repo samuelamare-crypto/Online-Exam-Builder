@@ -116,7 +116,7 @@ async function callClaude(text: string): Promise<any[]> {
 }
 
 export const parseFileQuestions = createServerFn({ method: "POST" })
-  .validator(
+  .inputValidator(
     z.object({
       base64: z.string().min(1),
       ext: z.enum(["pdf", "docx"]),
